@@ -16,9 +16,19 @@ export class Game {
         }
     }
 
+    private gameOver() {
+
+    }
+
     private evaluateCollisions() {
         this.monsters = this.monsters.filter(entity =>
             !this.player.checkSwordCollision(entity)
+        )
+        this.monsters.forEach(monster => {
+                if (hypot(this.player.x - monster.x, this.player.y - monster.y) < monster.r + this.player.r) {
+                    this.gameOver()
+                }
+            }
         )
     }
 
@@ -32,12 +42,17 @@ export class Game {
         } while (oldSize == this.monsters.length)
     }
 
+    private monsterDead() {
+        //play sound
+    }
+
     step(seconds: number) {
         this.player.step(seconds)
         this.monsters.forEach(entity => entity.step(seconds))
         this.evaluateCollisions()
 
         while (this.monsters.length < 5) {
+            this.monsterDead()
             this.addMonsterRandom()
         }
     }
