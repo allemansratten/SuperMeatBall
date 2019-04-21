@@ -1,9 +1,11 @@
 import {Entity} from "./Entity"
+import {hypot} from "./Util"
 
 export class Player extends Entity {
 
     private static readonly RADIUS = 23
-    private static readonly SWORD_LENGTH = 80
+    private static readonly SWORD_LENGTH = 100
+    private static readonly SWORD_STEPS = 10
     private static readonly SPEED = 160
     private static readonly ATTACK_TIME = 0.3
     private static readonly ATTACK_ANGLE = Math.PI
@@ -58,5 +60,17 @@ export class Player extends Entity {
                 this.attackProgress = null
             }
         }
+    }
+
+    checkSwordCollision(entity: Entity): boolean {
+        if (this.attackProgress == null) return false
+        for (let i = 0; i <= Player.SWORD_STEPS; i++) {
+            const swordX = this.x + Math.cos(this.swordAngle) * i / Player.SWORD_STEPS * Player.SWORD_LENGTH
+            const swordY = this.y + Math.sin(this.swordAngle) * i / Player.SWORD_STEPS * Player.SWORD_LENGTH
+            if (hypot(entity.x - swordX, entity.y - swordY) < entity.r) {
+                return true
+            }
+        }
+        return false
     }
 }
