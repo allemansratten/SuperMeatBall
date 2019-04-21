@@ -1,0 +1,26 @@
+{
+  "name": "supermeatball",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/allemansratten/SuperMeatBall.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/allemansratten/SuperMeatBall/issues"
+  },
+  "homepage": "https://github.com/allemansratten/SuperMeatBall#readme",
+  "scripts": {
+    "build": "webpack -p",
+    "start": "webpack -d --watch",
+    "compile": "webpack -d"
+  },
+  "devDependencies": {
+    "ts-loader": "^5.3.3",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.3.1"
+  }
+}
