@@ -2,6 +2,7 @@ import {Player} from "./Player"
 import {Entity} from "./Entity"
 import {FollowMonster} from "./FollowMonster"
 import {hypot} from "./Util"
+import {Howl} from "howler"
 
 export class Game {
 
@@ -17,19 +18,29 @@ export class Game {
     }
 
     private gameOver() {
-
+        var sound = new Howl({
+            src: ['../assets/ugh1.mp3'],
+            volume: 0.5,
+            rate: Math.random() * 0.4 + 0.9
+        })
+        this.monsters = []
+        sound.play()
     }
 
     private evaluateCollisions() {
-        this.monsters = this.monsters.filter(entity =>
-            !this.player.checkSwordCollision(entity)
-        )
-        this.monsters.forEach(monster => {
-                if (hypot(this.player.x - monster.x, this.player.y - monster.y) < monster.r + this.player.r) {
-                    this.gameOver()
-                }
+        this.monsters = this.monsters.filter(entity => {
+            if (this.player.checkSwordCollision(entity)) {
+                this.monsterDead()
+                return false
+            } else {
+                return true
             }
-        )
+        })
+        this.monsters.forEach(monster => {
+            if (hypot(this.player.x - monster.x, this.player.y - monster.y) < monster.r + this.player.r) {
+                this.gameOver()
+            }
+        })
     }
 
     private addMonsterRandom() {
@@ -43,7 +54,13 @@ export class Game {
     }
 
     private monsterDead() {
-        //play sound
+        var sound = new Howl({
+            src: ['../assets/au1.mp3'],
+            volume: 0.5,
+            rate: Math.random() * 0.4 + 0.9
+        })
+
+        sound.play()
     }
 
     step(seconds: number) {
@@ -52,7 +69,6 @@ export class Game {
         this.evaluateCollisions()
 
         while (this.monsters.length < 5) {
-            this.monsterDead()
             this.addMonsterRandom()
         }
     }

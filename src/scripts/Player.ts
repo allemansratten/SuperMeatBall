@@ -1,5 +1,6 @@
 import {Entity} from "./Entity"
 import {hypot} from "./Util"
+import {Howl, Howler} from 'howler';
 
 export class Player extends Entity {
 
