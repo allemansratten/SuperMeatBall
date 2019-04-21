@@ -7,4 +7,6 @@ export abstract class Entity implements Drawable {
 
     draw(context: CanvasRenderingContext2D): void {
     }
+
+    abstract step(seconds: number): void;
 }
