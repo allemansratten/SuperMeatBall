@@ -9,12 +9,33 @@ export class Game {
     private monsters: Entity[] = []
 
     private player: Player
+    private score: number = 0
+
+    private static readonly DEATH_SOUND_N = 8
+    private deathSounds: Howl
 
     constructor(private width: number, private height: number) {
         this.player = new Player(width / 2, height / 2)
         for (let i = 0; i < 5; i++) {
             this.addMonsterRandom()
         }
+
+        this.loadSounds()
+    }
+
+    private loadSounds() {
+        const DEATH_SOUND_PERIOD = 2000
+        const DEATH_SOUND_LENGTH = 500
+
+        let sprite = {}
+        for (let i = 0; i < Game.DEATH_SOUND_N; i++) {
+            sprite[i] = [i * DEATH_SOUND_PERIOD, DEATH_SOUND_LENGTH]
+        }
+
+        this.deathSounds = new Howl({
+            src: ['../assets/au2.mp3'],
+            sprite: sprite,
+        })
     }
 
     private gameOver() {
@@ -25,12 +46,14 @@ export class Game {
         })
         this.monsters = []
         sound.play()
+        this.score = 0
     }
 
     private evaluateCollisions() {
         this.monsters = this.monsters.filter(entity => {
             if (this.player.checkSwordCollision(entity)) {
                 this.monsterDead()
+                this.score++
                 return false
             } else {
                 return true
@@ -54,13 +77,15 @@ export class Game {
     }
 
     private monsterDead() {
-        var sound = new Howl({
-            src: ['../assets/au1.mp3'],
-            volume: 0.5,
-            rate: Math.random() * 0.4 + 0.9
-        })
-
-        sound.play()
+        const i = Math.floor(Math.random() * Game.DEATH_SOUND_N)
+        this.deathSounds.play("" + i)
+        // var sound = new Howl({
+        //     src: ['../assets/au1.mp3'],
+        //     volume: 0.5,
+        //     rate: Math.random() * 0.4 + 0.9
+        // })
+        //
+        // sound.play()
     }
 
     step(seconds: number) {
@@ -68,13 +93,20 @@ export class Game {
         this.monsters.forEach(entity => entity.step(seconds))
         this.evaluateCollisions()
 
-        while (this.monsters.length < 5) {
+        const wantMonsters = 5 + Math.floor(this.score / 10)
+        while (this.monsters.length < wantMonsters) {
             this.addMonsterRandom()
         }
     }
 
     drawAll(context: CanvasRenderingContext2D) {
         context.clearRect(0, 0, this.width, this.height)
+
+        context.font = "60px Arial"
+        context.fillStyle = 'rgb(240,200,200)'
+        context.textAlign = "center"
+        context.textBaseline = "middle"
+        context.fillText("" + this.score, this.width / 2, this.height / 2)
 
         this.player.draw(context)
         this.monsters.forEach(entity => entity.draw(context))
