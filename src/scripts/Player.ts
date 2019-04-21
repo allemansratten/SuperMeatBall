@@ -1,6 +1,6 @@
 import {Entity} from "./Entity"
 import {hypot} from "./Util"
-import {Howl, Howler} from 'howler';
+import {Howl, Howler} from 'howler'
 
 export class Player extends Entity {
 
@@ -16,8 +16,18 @@ export class Player extends Entity {
     swordAngle: number = 0
     attackProgress: number = null
 
+    private static readonly image = document.getElementById('meatball') as CanvasImageSource
+
     constructor(x: number, y: number) {
         super(x, y, Player.RADIUS)
+    }
+
+    private drawImageCenter(context: CanvasRenderingContext2D, x: number, y: number, cx: number, cy: number, scale: number, rotation: number) {
+        context.save()
+        context.setTransform(scale, 0, 0, scale, x, y) // sets scale and origin
+        context.rotate(rotation)
+        context.drawImage(Player.image, -cx, -cy)
+        context.restore()
     }
 
     draw(context: CanvasRenderingContext2D): void {
@@ -34,10 +44,12 @@ export class Player extends Entity {
         context.lineWidth = 5
         context.stroke()
 
-        context.fillStyle = "#d22"
-        context.beginPath()
-        context.arc(this.x, this.y, this.r, 0, 2 * Math.PI)
-        context.fill()
+        this.drawImageCenter(context, this.x, this.y, Player.RADIUS, Player.RADIUS, 1, this.swordAngle)
+
+        // context.fillStyle = "#d22"
+        // context.beginPath()
+        // context.arc(this.x, this.y, this.r, 0, 2 * Math.PI)
+        // context.fill()
     }
 
     step(seconds: number): void {
